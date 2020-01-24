@@ -51,18 +51,20 @@ public class TicTacToe {
 		// continue
 		int countX = countChar(symbols, 'X');
 		int countO = countChar(symbols, 'O');
-		System.out.println(countX + " " + countO);
-		if (Math.abs(countX - countO) > 1 || countX == 3 && countO == 3) {
+		boolean winX = checkWinner(symbols, 'X');
+		boolean winO = checkWinner(symbols, 'O');
+//		System.out.println(countX + " " + countO);
+		if (Math.abs(countX - countO) > 1 || winX && winO) {
 			System.out.println("Impossible");
 		} else {
-			if (countX == 3 && checkWinner(symbols, 'X')) {
+			if (winX) {
 				System.out.println("X wins");
-			} else if (countO == 3 && checkWinner(symbols, 'O')) {
+			} else if (winO) {
 				System.out.println("O wins");
-			} else if (countChar(symbols, ' ') == 0) {
-				System.out.println("Game not finished");
-			} else {
+			} else if (countChar(symbols, '_') == 0) {
 				System.out.println("Draw");
+			} else {
+				System.out.println("Game not finished");
 			}
 		}
 	}
