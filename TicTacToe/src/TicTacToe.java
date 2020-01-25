@@ -1,6 +1,10 @@
 import java.util.Scanner;
 
 public class TicTacToe {
+	static int coordX;
+	static int coordY;
+	static int iSymb;
+
 	private static boolean checkWinner(char[] chars, char c) {
 		if (chars[0] == c && chars[1] == c && chars[2] == c) {
 			return  true;
@@ -30,11 +34,36 @@ public class TicTacToe {
 		return count;
 	}
 
-	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-		String line = scanner.nextLine();
-		char[] symbols = line.toCharArray();
-		System.out.println("Enter cells: " + line);
+	private static void readCoords(Scanner scanner, char[] symbols) {
+		try {
+			String coordinatesLine = scanner.nextLine();
+			System.out.println("Enter the coordinates: " + coordinatesLine);
+			String[] coordinatesStrings = coordinatesLine.split(" ");
+			if (coordinatesStrings.length != 2) {
+				System.out.println("You should enter two coordinates!");
+				readCoords(scanner, symbols);
+				return;
+			}
+			coordX = Integer.parseInt(coordinatesStrings[0]);
+			coordY = Integer.parseInt(coordinatesStrings[1]);
+			if (coordX < 1 || coordX > 3 || coordY < 1 || coordY > 3) {
+				System.out.println("Coordinates should be from 1 to 3!");
+				readCoords(scanner, symbols);
+				return;
+			}
+			iSymb = coordX + coordY - (coordY == 3 ? 4 : 0) + (coordY == 1 ? 4 : 0);
+			if (symbols[iSymb] != ' ') {
+				System.out.println("This cell is occupied! Choose another one!");
+				readCoords(scanner, symbols);
+				return;
+			}
+		} catch (Exception e) {
+			System.out.println("You should enter numbers!");
+			readCoords(scanner, symbols);
+		}
+	}
+
+	private static void printField(char[] symbols) {
 		System.out.println("---------");
 		int i = 0;
 		while (i < 9) {
@@ -48,23 +77,33 @@ public class TicTacToe {
 			++i;
 		}
 		System.out.println("---------");
-		// continue
-		int countX = countChar(symbols, 'X');
-		int countO = countChar(symbols, 'O');
-		boolean winX = checkWinner(symbols, 'X');
-		boolean winO = checkWinner(symbols, 'O');
-//		System.out.println(countX + " " + countO);
-		if (Math.abs(countX - countO) > 1 || winX && winO) {
-			System.out.println("Impossible");
-		} else {
-			if (winX) {
-				System.out.println("X wins");
-			} else if (winO) {
-				System.out.println("O wins");
-			} else if (countChar(symbols, '_') == 0) {
-				System.out.println("Draw");
+	}
+
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		char[] symbols = "         ".toCharArray();
+		printField(symbols);
+		boolean movesX = true;
+		boolean cycleToWork = true;
+		while (cycleToWork) {
+			readCoords(scanner, symbols);
+			if (movesX) {
+				symbols[iSymb] = 'X';
+				movesX = false;
 			} else {
-				System.out.println("Game not finished");
+				symbols[iSymb] = 'O';
+				movesX = true;
+			}
+			printField(symbols);
+			if (countChar(symbols, ' ') == 0) {
+				System.out.println("Draw");
+				cycleToWork = false;
+			} else if (checkWinner(symbols, 'X')) {
+				System.out.println("X wins");
+				cycleToWork = false;
+			} else if (checkWinner(symbols, 'O')) {
+				System.out.println("O wins");
+				cycleToWork = false;
 			}
 		}
 	}
